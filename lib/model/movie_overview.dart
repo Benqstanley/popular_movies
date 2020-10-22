@@ -33,7 +33,7 @@ class MovieOverview {
           : 0,
       voteCount: json.containsKey("vote_count") ? json["vote_count"] : 0,
       id: json.containsKey("id") ? json["id"] : 0,
-      posterPath: json.containsKey("poster_path") ? json["poster_path"] : "",
+      posterPath: json.containsKey("poster_path") ? "https://image.tmdb.org/t/p/w185" + json["poster_path"] : "",
     );
   }
 

@@ -20,13 +20,36 @@ class MovieDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            //CachedNetworkImage(imageUrl: selectedMovie.detailsPageUrl),
-            Text(selectedMovie.title),
-            Text(selectedMovie.description),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                height: 8,
+              ),
+              CachedNetworkImage(
+                imageUrl: selectedMovie.posterPath,
+                placeholder: (context, string) {
+                  return SizedBox(
+                    width: 184,
+                    height: 278,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                },
+              ),
+              Container(height: 16),
+              Text(
+                selectedMovie.title,
+                style: TextStyle(fontSize: 30),
+              ),
+              Container(height: 16),
+              Text(
+                selectedMovie.description,
+                style: TextStyle(fontSize: 24),
+              ),
+            ],
+          ),
         ),
       ),
     );
