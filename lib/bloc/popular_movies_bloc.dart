@@ -1,4 +1,4 @@
-
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:popular_movies/api/tmdb_api.dart';
 import 'package:popular_movies/bloc/movie_events.dart';
@@ -11,19 +11,33 @@ import 'package:popular_movies/model/movie_overview.dart';
 
 class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
   List<MovieOverview> popularMovies = [];
+  int currentPage = 0;
+  final Key key = UniqueKey();
+
   PopularMoviesBloc(MovieState initialState) : super(initialState);
+
+  factory PopularMoviesBloc.factory(MovieState initialState) {
+    print('factory');
+    PopularMoviesBloc bloc = PopularMoviesBloc(initialState);
+    return bloc;
+  }
 
   @override
   Stream<MovieState> mapEventToState(MovieEvent event) async* {
-    switch(event.runtimeType){
-      case FetchEvent:
-        var nextPage = await TMDBAPI.instance().fetchPopularMovies((event as FetchEvent).pageNumber);
+    if (event is FetchEvent) {
+      if(event.pageNumber > currentPage) {
+        List<MovieOverview> nextPage =
+        await TMDBAPI.instance().fetchPopularMovies(
+          event.pageNumber,
+        );
         popularMovies.addAll(nextPage);
-        yield LoadedState(popularMovies);
-        break;
+        currentPage = event.pageNumber;
+      }
+      yield LoadedState(
+        movies: popularMovies,
+        currentPage: currentPage,
+      );
     }
+    return;
   }
 }
-
-
-

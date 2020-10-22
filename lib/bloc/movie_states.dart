@@ -14,10 +14,15 @@ class ErrorState extends MovieState {
 
 class LoadedState extends MovieState {
   final List<MovieOverview> movies;
+  final int currentPage;
 
-  LoadedState(this.movies);
+  LoadedState({this.movies = const [], this.currentPage,});
 }
 
 class LoadingState extends MovieState {
+
+}
+
+class InitialState extends MovieState {
 
 }

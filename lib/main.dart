@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:popular_movies/api/tmdb_api.dart';
 import 'package:popular_movies/model/movie_details.dart';
+import 'package:popular_movies/model/movie_overview.dart';
 import 'package:popular_movies/ui/movie_details_page.dart';
 import 'package:popular_movies/ui/movie_list_page.dart';
 
@@ -10,8 +11,8 @@ import 'bloc/movie_states.dart';
 import 'bloc/popular_movies_bloc.dart';
 
 void main() {
-  GetIt.I.registerLazySingleton<PopularMoviesBloc>(
-      () => PopularMoviesBloc(LoadingState()));
+  GetIt.I
+      .registerSingleton<PopularMoviesBloc>(PopularMoviesBloc.factory(InitialState()));
   runApp(PopularMoviesApp());
 }
 
@@ -27,7 +28,7 @@ class _PopularMoviesAppState extends State<PopularMoviesApp> {
     FluroRouter router = FluroRouter();
     router.define("/movie", handler: Handler(handlerFunc: (context, params) {
       return MovieDetailsPage(
-        selectedMovie: context.settings.arguments as MovieDetails,
+        selectedMovie: context.settings.arguments as MovieOverview,
       );
     }));
     router.define("/", handler: Handler(handlerFunc: (context, params) {
@@ -44,7 +45,7 @@ class _PopularMoviesAppState extends State<PopularMoviesApp> {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MovieListPage(),
     );
   }
 }
