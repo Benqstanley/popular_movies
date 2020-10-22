@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:popular_movies/model/movie_details.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 import 'package:popular_movies/ui/custom_progress_indicator.dart';
-import 'package:popular_movies/ui/popular_movie_resources.dart';
+import 'package:popular_movies/ui/resources.dart';
 
 /// I could utilize the BloC pattern here to retrieve the selected movie.
 /// However, I wanted to toy with the argument structure that Fluro enables
@@ -27,6 +27,9 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
     super.initState();
   }
 
+  double posterHeight = Resources.posterHeight;
+  double posterWidth = Resources.posterWidth;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -46,8 +49,8 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                 CachedNetworkImage(
                   imageBuilder: (context, provider) {
                     return Container(
-                        width: 184,
-                        height: 278,
+                        height: posterHeight,
+                        width: posterWidth,
                         decoration: BoxDecoration(boxShadow: [
                           BoxShadow(
                             spreadRadius: 4,
@@ -62,8 +65,8 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                   imageUrl: widget.selectedMovie.posterPath,
                   placeholder: (context, string) {
                     return SizedBox(
-                      width: 184,
-                      height: 278,
+                      height: posterHeight,
+                      width: posterWidth,
                       child: Center(child: CircularProgressIndicator()),
                     );
                   },
@@ -74,12 +77,12 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                     duration: Duration(milliseconds: 1500),
                     builder: (context, progress, child) {
                       String progressString =
-                          PopularMovieResources.formatProgress(
+                          Resources.formatProgress(
                               progress * widget.selectedMovie.voteAverage * 10);
                       return Column(
                         children: [
                           Text(
-                              "${PopularMovieResources.votesHeader} ${widget.selectedMovie.voteCount}"),
+                              "${Resources.votesHeader} ${widget.selectedMovie.voteCount}"),
                           Container(
                             height: 4,
                           ),
@@ -89,7 +92,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                             child: Row(
                               children: [
                                 Text(
-                                  PopularMovieResources.rating,
+                                  Resources.rating,
                                   style: TextStyle(fontSize: 16),
                                 ),
                                 Expanded(
