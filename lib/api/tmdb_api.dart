@@ -47,12 +47,18 @@ class TMDBAPI {
     return null;
   }
 
-  Future<Map<String, dynamic>> search(String searchTerm) async {
+  Future<List<MovieOverview>> search(String searchTerm) async {
     final response = await get(
         "https://api.themoviedb.org/3/search/"
             "movie?api_key=$_apiKey&language=en-US&query=${_prepareSearchTerm(searchTerm)}&page=1&include_adult=false");
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      Map<String, dynamic> jsonMap = json.decode(response.body);
+      if (jsonMap.containsKey("results")) {
+        return (jsonMap["results"] as List<dynamic>).map<MovieOverview>((
+            movieMap) {
+          return MovieOverview.fromJson(movieMap);
+        }).toList();
+      }
     }
     return null;
   }

@@ -1,4 +1,3 @@
-
 import 'package:popular_movies/bloc/popular_movies_bloc.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 
@@ -15,14 +14,15 @@ class ErrorState extends MovieState {
 class LoadedState extends MovieState {
   final List<MovieOverview> movies;
   final int currentPage;
+  final bool maxReached;
 
-  LoadedState({this.movies = const [], this.currentPage,});
+  LoadedState({
+    this.movies = const [],
+    this.currentPage,
+    this.maxReached = false,
+  });
 }
 
-class LoadingState extends MovieState {
+class LoadingState extends MovieState {}
 
-}
-
-class InitialState extends MovieState {
-
-}
+class InitialState extends MovieState {}

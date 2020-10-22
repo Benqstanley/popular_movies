@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:popular_movies/model/movie_details.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 import 'package:popular_movies/ui/custom_progress_indicator.dart';
+import 'package:popular_movies/ui/popular_movie_resources.dart';
 
 /// I could utilize the BloC pattern here to retrieve the selected movie.
 /// However, I wanted to toy with the argument structure that Fluro enables
@@ -28,71 +29,108 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.selectedMovie.title),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                height: 8,
-              ),
-              CachedNetworkImage(
-                imageUrl: widget.selectedMovie.posterPath,
-                placeholder: (context, string) {
-                  return SizedBox(
-                    width: 184,
-                    height: 278,
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                },
-              ),
-              Container(height: 16),
-              TweenAnimationBuilder(
-                  tween: Tween<double>(begin: 0, end: 1),
-                  duration: Duration(milliseconds: 1500),
-                  builder: (context, progress, child) {
-                    StringBuffer progressStringBuffer = StringBuffer(
-                        (progress * widget.selectedMovie.voteAverage * 10)
-                            .toString())
-                      ..write("000");
-                    String progressString =
-                        progressStringBuffer.toString().substring(0, 4) + "%";
-                    return Row(
-                      children: [
-                        Text(
-                          "Rating: ",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Expanded(
-                          child: CustomProgressIndicator(
-                            progress: progress,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          progressString,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.selectedMovie.title),
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  height: 8,
+                ),
+                CachedNetworkImage(
+                  imageBuilder: (context, provider) {
+                    return Container(
+                        width: 184,
+                        height: 278,
+                        decoration: BoxDecoration(boxShadow: [
+                          BoxShadow(
+                            spreadRadius: 4,
+                            blurRadius: 6,
+                            offset: Offset(0, 3),
+                          )
+                        ]),
+                        child: Image(
+                          image: provider,
+                        ));
+                  },
+                  imageUrl: widget.selectedMovie.posterPath,
+                  placeholder: (context, string) {
+                    return SizedBox(
+                      width: 184,
+                      height: 278,
+                      child: Center(child: CircularProgressIndicator()),
                     );
-                  }),
-              Text(
-                widget.selectedMovie.title,
-                style: TextStyle(fontSize: 30),
-              ),
-              Container(height: 50),
-              Text(
-                widget.selectedMovie.description,
-                style: TextStyle(fontSize: 24),
-              ),
-            ],
+                  },
+                ),
+                Container(height: 16),
+                TweenAnimationBuilder(
+                    tween: Tween<double>(begin: 0, end: 1),
+                    duration: Duration(milliseconds: 1500),
+                    builder: (context, progress, child) {
+                      String progressString =
+                          PopularMovieResources.formatProgress(
+                              progress * widget.selectedMovie.voteAverage * 10);
+                      return Column(
+                        children: [
+                          Text(
+                              "${PopularMovieResources.votesHeader} ${widget.selectedMovie.voteCount}"),
+                          Container(
+                            height: 4,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(border: Border.all()),
+                            padding: EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Text(
+                                  PopularMovieResources.rating,
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                Expanded(
+                                  child: CustomProgressIndicator(
+                                    height: 12,
+                                    progress: progress *
+                                        widget.selectedMovie.voteAverage /
+                                        10,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 8,
+                                ),
+                                SizedBox(
+                                  child: Text(
+                                    progressString,
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  width: 56,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      );
+                    }),
+                Container(
+                  height: 8,
+                ),
+                Text(
+                  widget.selectedMovie.title,
+                  style: TextStyle(fontSize: 30),
+                  textAlign: TextAlign.center,
+                ),
+                Container(height: 16),
+                Text(
+                  widget.selectedMovie.description,
+                  style: TextStyle(fontSize: 24),
+                ),
+              ],
+            ),
           ),
         ),
       ),

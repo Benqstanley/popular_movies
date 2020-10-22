@@ -15,6 +15,7 @@ class MovieListPage extends StatefulWidget {
 class _MovieListPageState extends State<MovieListPage> {
   final _scrollController = ScrollController();
   final _scrollThreshold = 200.0;
+  final TextEditingController searchValueController = TextEditingController();
   MovieState currentState;
 
   @override
@@ -33,15 +34,68 @@ class _MovieListPageState extends State<MovieListPage> {
     }
   }
 
+  Color determineColor(double score) {
+    ColorTween redYellow = ColorTween(
+      begin: Colors.red,
+      end: Colors.yellow,
+    );
+    ColorTween yellowGreen =
+        ColorTween(begin: Colors.yellow, end: Colors.green);
+    if (score < 5) {
+      return redYellow.lerp(score / 5);
+    } else {
+      return yellowGreen.lerp((score - 5) / 5);
+    }
+  }
+
   Widget movieItem(MovieOverview overview) {
     return ListTile(
       title: Text(overview.title),
       trailing: Icon(Icons.arrow_right),
+      leading: CircleAvatar(
+        backgroundColor: determineColor(overview.voteAverage),
+        child: Text(
+          "${overview.voteAverage}",
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.black,
+          ),
+        ),
+      ),
       onTap: () {
-        PopularMoviesApp.router.navigateTo(context, "/movie", routeSettings: RouteSettings(
-          arguments: overview
-        ));
+        PopularMoviesApp.router.navigateTo(context, "/movie",
+            routeSettings: RouteSettings(arguments: overview));
       },
+    );
+  }
+
+  Widget buildSearchArea() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              onSubmitted: (searchString) {
+                if (searchString != null && searchString.isNotEmpty)
+                  GetIt.I<PopularMoviesBloc>().add(SearchEvent(searchString));
+              },
+              decoration: InputDecoration(
+                  hintText: "Search for a Movie",
+                  icon: Icon(Icons.search),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.close),
+                    onPressed: () {
+                      searchValueController.clear();
+                      GetIt.I<PopularMoviesBloc>().add(FetchEvent(
+                          (currentState as LoadedState).currentPage));
+                    },
+                  )),
+              controller: searchValueController,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -50,14 +104,22 @@ class _MovieListPageState extends State<MovieListPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.max,
       children: [
+        buildSearchArea(),
         Expanded(
-          child: ListView.builder(
+          child: ListView.separated(
             controller: _scrollController,
             itemBuilder: (context, position) {
               if (position >= movies.length) return BottomLoadingIndicator();
               return movieItem(movies[position]);
             },
-            itemCount: movies.length + 1,
+            separatorBuilder: (context, position) {
+              return Divider(
+                color: Colors.grey,
+              );
+            },
+            itemCount: (currentState as LoadedState).maxReached
+                ? movies.length
+                : movies.length + 1,
           ),
         )
       ],
@@ -67,7 +129,9 @@ class _MovieListPageState extends State<MovieListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Popular Movies"),),
+      appBar: AppBar(
+        title: Text("Popular Movies"),
+      ),
       body: BlocBuilder<PopularMoviesBloc, MovieState>(
         cubit: GetIt.I<PopularMoviesBloc>(),
         builder: (context, state) {
@@ -93,7 +157,6 @@ class _MovieListPageState extends State<MovieListPage> {
 class BottomLoadingIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    print('building Bottom Loader');
     return Container(
       alignment: Alignment.center,
       child: Center(

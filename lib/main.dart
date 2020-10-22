@@ -1,8 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:popular_movies/api/tmdb_api.dart';
-import 'package:popular_movies/model/movie_details.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 import 'package:popular_movies/ui/movie_details_page.dart';
 import 'package:popular_movies/ui/movie_list_page.dart';
@@ -11,8 +9,8 @@ import 'bloc/movie_states.dart';
 import 'bloc/popular_movies_bloc.dart';
 
 void main() {
-  GetIt.I
-      .registerSingleton<PopularMoviesBloc>(PopularMoviesBloc.factory(InitialState()));
+  GetIt.I.registerSingleton<PopularMoviesBloc>(
+      PopularMoviesBloc.factory(InitialState()));
   runApp(PopularMoviesApp());
 }
 
@@ -42,10 +40,10 @@ class _PopularMoviesAppState extends State<PopularMoviesApp> {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MovieListPage(),
+          primarySwatch: Colors.orange,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+          scaffoldBackgroundColor: Color.fromRGBO(248, 201, 114, 1)),
+      home: SafeArea(child: MovieListPage()),
     );
   }
 }
@@ -62,21 +60,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void printWrapped(Object toPrint) {
-    printWrappedString(toPrint.toString());
-  }
-
-  void printWrappedString(String toPrint) {
-    if (toPrint.length > 175) {
-      print(toPrint.substring(0, 175));
-      printWrappedString(toPrint.substring(175));
-    } else {
-      print(toPrint);
-    }
-  }
-
   void _incrementCounter() async {
-    printWrapped((await TMDBAPI.instance().fetchPopularMovies(1)));
     setState(() {
       _counter++;
     });

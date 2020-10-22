@@ -11,13 +11,13 @@ import 'package:popular_movies/model/movie_overview.dart';
 
 class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
   List<MovieOverview> popularMovies = [];
+  List<MovieOverview> searchResults = [];
   int currentPage = 0;
   final Key key = UniqueKey();
 
   PopularMoviesBloc(MovieState initialState) : super(initialState);
 
   factory PopularMoviesBloc.factory(MovieState initialState) {
-    print('factory');
     PopularMoviesBloc bloc = PopularMoviesBloc(initialState);
     return bloc;
   }
@@ -25,7 +25,7 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
   @override
   Stream<MovieState> mapEventToState(MovieEvent event) async* {
     if (event is FetchEvent) {
-      if(event.pageNumber > currentPage) {
+      if(event?.pageNumber != null && event.pageNumber > currentPage) {
         List<MovieOverview> nextPage =
         await TMDBAPI.instance().fetchPopularMovies(
           event.pageNumber,
@@ -36,6 +36,15 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
       yield LoadedState(
         movies: popularMovies,
         currentPage: currentPage,
+      );
+    }else if(event is SearchEvent){
+      searchResults =
+      await TMDBAPI.instance().search(
+        event.searchQuery,
+      );
+      yield LoadedState(
+        movies: searchResults,
+        maxReached: true,
       );
     }
     return;
