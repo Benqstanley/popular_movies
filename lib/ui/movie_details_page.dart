@@ -18,7 +18,7 @@ class MovieDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text(selectedMovie.title),),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -43,7 +43,7 @@ class MovieDetailsPage extends StatelessWidget {
                 selectedMovie.title,
                 style: TextStyle(fontSize: 30),
               ),
-              Container(height: 16),
+              Container(height: 50),
               Text(
                 selectedMovie.description,
                 style: TextStyle(fontSize: 24),

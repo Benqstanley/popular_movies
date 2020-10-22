@@ -53,7 +53,6 @@ class _MovieListPageState extends State<MovieListPage> {
         Expanded(
           child: ListView.builder(
             controller: _scrollController,
-            physics: BouncingScrollPhysics(),
             itemBuilder: (context, position) {
               if (position >= movies.length) return BottomLoadingIndicator();
               return movieItem(movies[position]);
@@ -67,9 +66,8 @@ class _MovieListPageState extends State<MovieListPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('building');
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text("Popular Movies"),),
       body: BlocBuilder<PopularMoviesBloc, MovieState>(
         cubit: GetIt.I<PopularMoviesBloc>(),
         builder: (context, state) {
