@@ -1,14 +1,18 @@
+import 'package:equatable/equatable.dart';
 import 'package:popular_movies/bloc/popular_movies_bloc.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 
 /// States that the [PopularMoviesBloc] will provide to the UI.
 
-abstract class MovieState {}
+abstract class MovieState extends Equatable{}
 
 class ErrorState extends MovieState {
   final String errorDescription;
 
   ErrorState(this.errorDescription);
+
+  @override
+  List<Object> get props => [errorDescription];
 }
 
 class LoadedState extends MovieState {
@@ -21,8 +25,17 @@ class LoadedState extends MovieState {
     this.currentPage,
     this.maxReached = false,
   });
+
+  @override
+  List<Object> get props => [currentPage];
 }
 
-class LoadingState extends MovieState {}
+class LoadingState extends MovieState {
+  @override
+  List<Object> get props => [];
+}
 
-class InitialState extends MovieState {}
+class InitialState extends MovieState {
+  @override
+  List<Object> get props => [];
+}

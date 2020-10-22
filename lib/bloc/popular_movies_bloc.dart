@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:popular_movies/api/tmdb_api.dart';
 import 'package:popular_movies/bloc/movie_events.dart';
 import 'package:popular_movies/bloc/movie_states.dart';
@@ -12,34 +13,47 @@ import 'package:popular_movies/model/movie_overview.dart';
 class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
   List<MovieOverview> popularMovies = [];
   List<MovieOverview> searchResults = [];
+  TMDBAPI tmdbapi;
   int currentPage = 0;
+  bool fetchInProgress = false;
   final Key key = UniqueKey();
+
+  void printKey() {
+    print(key);
+  }
 
   PopularMoviesBloc(MovieState initialState) : super(initialState);
 
-  factory PopularMoviesBloc.factory(MovieState initialState) {
-    PopularMoviesBloc bloc = PopularMoviesBloc(initialState);
-    return bloc;
-  }
-
   @override
   Stream<MovieState> mapEventToState(MovieEvent event) async* {
+    if (tmdbapi == null) tmdbapi = GetIt.I<TMDBAPI>();
     if (event is FetchEvent) {
-      if(event?.pageNumber != null && event.pageNumber > currentPage) {
-        List<MovieOverview> nextPage =
-        await TMDBAPI.instance().fetchPopularMovies(
+      if (event?.pageNumber != null &&
+          event.pageNumber > currentPage &&
+          !fetchInProgress) {
+        print("current page is: $currentPage");
+        print("Fetching: ${event.pageNumber}");
+        fetchInProgress = true;
+        print('about to wait');
+        List<MovieOverview> nextPage = await tmdbapi.fetchPopularMovies(
           event.pageNumber,
         );
-        popularMovies.addAll(nextPage);
-        currentPage = event.pageNumber;
+        print('done waiting');
+        print(nextPage);
+        fetchInProgress = false;
+        if (nextPage.isNotEmpty) {
+          print('yielding');
+          popularMovies.addAll(nextPage);
+          currentPage = event.pageNumber;
+          yield LoadedState(
+            movies: popularMovies,
+            currentPage: currentPage,
+          );
+        }
       }
-      yield LoadedState(
-        movies: popularMovies,
-        currentPage: currentPage,
-      );
-    }else if(event is SearchEvent){
-      searchResults =
-      await TMDBAPI.instance().search(
+
+    } else if (event is SearchEvent) {
+      searchResults = await tmdbapi.search(
         event.searchQuery,
       );
       yield LoadedState(

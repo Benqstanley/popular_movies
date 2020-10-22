@@ -76,6 +76,7 @@ class _MovieListPageState extends State<MovieListPage> {
         children: [
           Expanded(
             child: TextField(
+              textInputAction: TextInputAction.search,
               onSubmitted: (searchString) {
                 if (searchString != null && searchString.isNotEmpty)
                   GetIt.I<PopularMoviesBloc>().add(SearchEvent(searchString));
@@ -128,13 +129,15 @@ class _MovieListPageState extends State<MovieListPage> {
 
   @override
   Widget build(BuildContext context) {
+    print('building list');
     return Scaffold(
       appBar: AppBar(
         title: Text("Popular Movies"),
       ),
       body: BlocBuilder<PopularMoviesBloc, MovieState>(
-        cubit: GetIt.I<PopularMoviesBloc>(),
+        cubit: GetIt.I<PopularMoviesBloc>()..printKey(),
         builder: (context, state) {
+          print(state);
           currentState = state;
           if (state is ErrorState) {
             return Center(child: Text("There has been a problem"));

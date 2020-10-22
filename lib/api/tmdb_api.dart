@@ -3,19 +3,13 @@ import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 
-/// This class should only be instantiated once, so a singleton pattern is used.
-
 class TMDBAPI {
-  static final TMDBAPI _instance = TMDBAPI._privateConstructor();
   static final String _apiKey = "4ff9d08260ed338797caa272d7df35dd";
   static final String dataLookup = "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&page=1&api_key=4ff9d08260ed338797caa272d7df35dd";
 
 
-  TMDBAPI._privateConstructor();
+  TMDBAPI();
 
-  factory TMDBAPI.instance() {
-    return _instance;
-  }
 
   Future<List<MovieOverview>> fetchPopularMovies(int pageNumber) async {
     pageNumber = pageNumber ?? 1;
@@ -32,20 +26,21 @@ class TMDBAPI {
           }).toList();
         }
       }
+      print('error');
       return null;
     }catch (error){
       return null;
     }
   }
 
-  Future<Map<String, dynamic>> fetchMovieDetails(int id) async {
+/*  Future<Map<String, dynamic>> fetchMovieDetails(int id) async {
     final response =
         await get("https://api.themoviedb.org/3/movie/$id?api_key=$_apiKey");
     if (response.statusCode == 200) {
       return json.decode(response.body);
     }
     return null;
-  }
+  }*/
 
   Future<List<MovieOverview>> search(String searchTerm) async {
     final response = await get(

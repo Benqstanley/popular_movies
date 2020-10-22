@@ -1,13 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:popular_movies/model/movie_details.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 import 'package:popular_movies/ui/custom_progress_indicator.dart';
 import 'package:popular_movies/ui/resources.dart';
 
 /// I could utilize the BloC pattern here to retrieve the selected movie.
 /// However, I wanted to toy with the argument structure that Fluro enables
-/// so I will pass the [MovieDetails] object via the router.
+/// so I will pass the [MovieOverview] object via the router.
 
 class MovieDetailsPage extends StatefulWidget {
   final MovieOverview selectedMovie;
@@ -48,6 +47,16 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                 ),
                 CachedNetworkImage(
                   imageBuilder: (context, provider) {
+                    provider
+                        .resolve(ImageConfiguration())
+                        .addListener(ImageStreamListener((info, value) {
+                      WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                        setState(() {
+                          posterWidth = info.image.width * 1.0;
+                          posterHeight = info.image.height * 1.0;
+                        });
+                      });
+                    }));
                     return Container(
                         height: posterHeight,
                         width: posterWidth,
@@ -76,9 +85,8 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                     tween: Tween<double>(begin: 0, end: 1),
                     duration: Duration(milliseconds: 1500),
                     builder: (context, progress, child) {
-                      String progressString =
-                          Resources.formatProgress(
-                              progress * widget.selectedMovie.voteAverage * 10);
+                      String progressString = Resources.formatProgress(
+                          progress * widget.selectedMovie.voteAverage * 10);
                       return Column(
                         children: [
                           Text(
