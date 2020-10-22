@@ -21,4 +21,25 @@ class MockPopularMoviesBloc extends MockBloc<MovieState>
         ]));
     return mockBloc;
   }
+
+  factory MockPopularMoviesBloc.searchState() {
+    MockPopularMoviesBloc mockBloc = MockPopularMoviesBloc();
+    Stream<MovieState> stream = Stream.fromFutures([
+      Future.delayed(Duration(milliseconds: 100), () => InitialState()),
+      Future.delayed(
+          Duration(milliseconds: 200),
+          () => LoadedState(
+                movies: MockTMBDAPI.discoverList,
+                currentPage: 1,
+              )),
+      Future.delayed(
+          Duration(milliseconds: 300),
+          () => LoadedState(
+                movies: MockTMBDAPI.searchList,
+                currentPage: 1,
+              ))
+    ]);
+    whenListen(mockBloc, stream);
+    return mockBloc;
+  }
 }

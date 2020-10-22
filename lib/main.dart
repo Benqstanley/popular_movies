@@ -26,6 +26,7 @@ class _PopularMoviesAppState extends State<PopularMoviesApp> {
   _PopularMoviesAppState() {
     FluroRouter router = FluroRouter();
     router.define("/movie", handler: Handler(handlerFunc: (context, params) {
+      print("navigating");
       return MovieDetailsPage(
         selectedMovie: context.settings.arguments as MovieOverview,
       );

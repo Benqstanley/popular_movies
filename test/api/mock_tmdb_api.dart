@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:mockito/mockito.dart';
 import 'package:popular_movies/api/tmdb_api.dart';
+import 'package:popular_movies/model/fetch_movies_response.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 
 class MockTMBDAPI extends Mock implements TMDBAPI {
@@ -71,7 +72,10 @@ class MockTMBDAPI extends Mock implements TMDBAPI {
   factory MockTMBDAPI.success() {
     var api = MockTMBDAPI();
     when(api.fetchPopularMovies(any)).thenAnswer((realInvocation) async {
-      return discoverList;
+      return FetchMoviesResponse(
+        popularMovies: discoverList,
+        total: 20,
+      );
     });
     when(api.search(any)).thenAnswer((realInvocation) async => searchList);
     return api;

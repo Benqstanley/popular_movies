@@ -24,7 +24,7 @@ void main() {
     bloc = PopularMoviesBloc(InitialState());
     bloc.add(FetchEvent(1));
     var state = await bloc.first;
-    expect(state, LoadedState());
+    expect(state, LoadedState(currentPage: 1));
     expect((state as LoadedState).movies.length, 20);
     verify(GetIt.I<TMDBAPI>().fetchPopularMovies(any));
   });
@@ -33,7 +33,7 @@ void main() {
     bloc = PopularMoviesBloc(InitialState());
     bloc.add(SearchEvent("Jack Reacher"));
     var state = await bloc.first;
-    expect(state, LoadedState());
+    expect(state is LoadedState, true);
     expect((state as LoadedState).movies.length, 2);
     verify(GetIt.I<TMDBAPI>().search(any));
   });

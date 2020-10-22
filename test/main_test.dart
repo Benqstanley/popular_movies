@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:popular_movies/api/tmdb_api.dart';
-import 'package:popular_movies/bloc/movie_states.dart';
 import 'package:popular_movies/bloc/popular_movies_bloc.dart';
 import 'package:popular_movies/main.dart';
 import 'package:popular_movies/ui/movie_details_page.dart';
@@ -13,21 +12,65 @@ import 'bloc/mock_popular_movies_bloc.dart';
 
 void main() {
   setUp(() {
-    GetIt.I.registerSingleton<PopularMoviesBloc>(
-        MockPopularMoviesBloc.loadedState());
     GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.success());
   });
 
-  tearDown((){
+  tearDown(() {
     GetIt.I<PopularMoviesBloc>()?.close();
+    GetIt.I.reset();
   });
 
-
+  /// Upon running the app a query is fired to fetch popular movies
+  /// When one of the resulting tiles is tapped the user is taken to the
+  /// Movie Details Page for the associated movie.
+  /// The user can then navigate back to the Movie List Page
 
   testWidgets('PopularMoviesApp List Test', (WidgetTester tester) async {
+    GetIt.I.registerSingleton<PopularMoviesBloc>(
+        MockPopularMoviesBloc.loadedState());
     await tester.pumpWidget(PopularMoviesApp());
     expect(find.byType(MovieListPage), findsOneWidget);
     await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(ListTile), findsWidgets);
+    await tester.tap(find.byType(ListTile).first);
+    await tester.pump(Duration(milliseconds: 100));
+    await tester.pump(Duration(milliseconds: 100));
+    expect(find.byType(MovieDetailsPage), findsOneWidget);
+    await tester.pump(Duration(milliseconds: 1500));
+    //The first movie in the mocked response
+    expect(find.text("2067"), findsWidgets);
+    expect(find.byType(BackButton), findsOneWidget);
+    await tester.tap(find.byType(BackButton));
+    await tester.pump(Duration(milliseconds: 100));
+    await tester.pumpAndSettle();
+    expect(find.byType(MovieDetailsPage), findsNothing);
+  });
+
+
+  /// Upon running the app a query is fired to fetch popular movies
+  /// When one of the resulting tiles is tapped the user is taken to the
+  /// Movie Details Page for the associated movie.
+  /// The user can then navigate back to the Movie List Page
+
+  testWidgets('PopularMoviesApp Search List Test', (WidgetTester tester) async {
+    GetIt.I.registerSingleton<PopularMoviesBloc>(
+        MockPopularMoviesBloc.searchState());
+    await tester.pumpWidget(PopularMoviesApp());
+    expect(find.byType(MovieListPage), findsOneWidget);
+    await tester.pump(Duration(milliseconds: 100));
+    await tester.pump(Duration(milliseconds: 100));
+    expect(find.byType(ListTile), findsWidgets);
+    await tester.enterText(find.byType(TextField), "Jack Reacher");
+    expect(find.byWidgetPredicate((widget){
+      if(widget is TextField){
+        widget.onSubmitted("Jack Reacher");
+        return true;
+      }
+      return false;
+    }), findsOneWidget);
+    await tester.pump(Duration(milliseconds: 100));
+    await tester.pump(Duration(milliseconds: 100));
+    await tester.pump(Duration(milliseconds: 100));
+    expect(find.byType(ListTile), findsNWidgets(2));
   });
 }

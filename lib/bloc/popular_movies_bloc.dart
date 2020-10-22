@@ -4,6 +4,7 @@ import 'package:get_it/get_it.dart';
 import 'package:popular_movies/api/tmdb_api.dart';
 import 'package:popular_movies/bloc/movie_events.dart';
 import 'package:popular_movies/bloc/movie_states.dart';
+import 'package:popular_movies/model/fetch_movies_response.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 
 /// This class responds to events to trigger api calls.
@@ -31,35 +32,35 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
       if (event?.pageNumber != null &&
           event.pageNumber > currentPage &&
           !fetchInProgress) {
-        print("current page is: $currentPage");
-        print("Fetching: ${event.pageNumber}");
         fetchInProgress = true;
-        print('about to wait');
-        List<MovieOverview> nextPage = await tmdbapi.fetchPopularMovies(
-          event.pageNumber,
-        );
-        print('done waiting');
-        print(nextPage);
+        FetchMoviesResponse response =
+            await tmdbapi.fetchPopularMovies(event.pageNumber);
+        List<MovieOverview> nextPage = response.popularMovies;
         fetchInProgress = false;
-        if (nextPage.isNotEmpty) {
-          print('yielding');
+        if (nextPage != null && nextPage.isNotEmpty) {
           popularMovies.addAll(nextPage);
           currentPage = event.pageNumber;
           yield LoadedState(
             movies: popularMovies,
             currentPage: currentPage,
+            maxReached: popularMovies.length >= response.total,
           );
+        } else {
+          yield ErrorState("Failed To Load Popular Movies");
         }
       }
-
     } else if (event is SearchEvent) {
       searchResults = await tmdbapi.search(
         event.searchQuery,
       );
-      yield LoadedState(
-        movies: searchResults,
-        maxReached: true,
-      );
+      if (searchResults != null && searchResults.isNotEmpty) {
+        yield LoadedState(
+          movies: searchResults,
+          maxReached: true,
+        );
+      } else {
+        yield ErrorState("Failed To Find Search Results");
+      }
     }
     return;
   }
