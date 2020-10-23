@@ -7,10 +7,11 @@ import 'package:popular_movies/bloc/popular_movies_bloc.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 import 'package:popular_movies/ui/movie_details_page.dart';
 import 'package:popular_movies/ui/movie_list_page.dart';
-
+import 'package:popular_movies/ui/resources.dart';
 
 void main() {
-  GetIt.I.registerSingleton<PopularMoviesBloc>(PopularMoviesBloc(InitialState()));
+  GetIt.I
+      .registerSingleton<PopularMoviesBloc>(PopularMoviesBloc(InitialState()));
   GetIt.I.registerSingleton<TMDBAPI>(TMDBAPI());
   runApp(PopularMoviesApp());
 }
@@ -44,7 +45,11 @@ class _PopularMoviesAppState extends State<PopularMoviesApp> {
           primarySwatch: Colors.orange,
           visualDensity: VisualDensity.adaptivePlatformDensity,
           scaffoldBackgroundColor: Color.fromRGBO(248, 201, 114, 1)),
-      home: SafeArea(child: MovieListPage()),
+      home: SafeArea(child: Builder(builder: (context) {
+        Resources.isSmall = MediaQuery.of(context).size.width < 600;
+        Resources.scaleFactor = Resources.isSmall ? 1.0 : 1.5;
+        return MovieListPage();
+      })),
     );
   }
 }

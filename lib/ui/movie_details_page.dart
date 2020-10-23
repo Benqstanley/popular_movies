@@ -10,12 +10,10 @@ import 'package:popular_movies/ui/resources.dart';
 
 class MovieDetailsPage extends StatefulWidget {
   final MovieOverview selectedMovie;
-  final bool largerSize;
 
   const MovieDetailsPage({
     Key key,
     @required this.selectedMovie,
-    this.largerSize = false,
   }) : super(key: key);
 
   @override
@@ -26,12 +24,10 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
   @override
   void initState() {
     super.initState();
-    scaleFactor = widget.largerSize ? 1.5 : 1.0;
   }
 
   double posterHeight = Resources.posterHeight;
   double posterWidth = Resources.posterWidth;
-  double scaleFactor;
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +91,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                         children: [
                           Text(
                             "${Resources.votesHeader} ${widget.selectedMovie.voteCount}",
-                            style: TextStyle(fontSize: 16 * scaleFactor),
+                            style: TextStyle(fontSize: 16 * Resources.scaleFactor),
                           ),
                           Container(
                             height: 4,
@@ -107,7 +103,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                               children: [
                                 Text(
                                   Resources.rating,
-                                  style: TextStyle(fontSize: 16 * scaleFactor),
+                                  style: TextStyle(fontSize: 16 * Resources.scaleFactor),
                                 ),
                                 Expanded(
                                   child: CustomProgressIndicator(
@@ -124,9 +120,9 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                                   child: Text(
                                     progressString,
                                     style:
-                                        TextStyle(fontSize: 16 * scaleFactor),
+                                        TextStyle(fontSize: 16 * Resources.scaleFactor),
                                   ),
-                                  width: 56 * scaleFactor,
+                                  width: 56 * Resources.scaleFactor,
                                 ),
                               ],
                             ),

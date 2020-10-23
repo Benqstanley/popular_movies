@@ -10,6 +10,9 @@ class Resources{
   static double get posterWidth => 184;
   static double get posterHeight => 278;
 
+  static double scaleFactor = 1.0;
+  static bool isSmall = true;
+
   static String formatProgress(double input){
     StringBuffer formatStringBuffer = StringBuffer(input.toString())
       ..write("000");

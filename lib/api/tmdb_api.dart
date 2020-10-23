@@ -5,10 +5,8 @@ import 'package:popular_movies/model/fetch_movies_response.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 
 class TMDBAPI {
-  static final String _apiKey = "4ff9d08260ed338797caa272d7df35dd";
-  static final String dataLookup =
-      "http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&page=1&api_key=4ff9d08260ed338797caa272d7df35dd";
-
+  //TODO: INPUT YOUR OWN API KEY
+  static final String _apiKey = "INSERT API KEY HERE";
   TMDBAPI();
 
   Future<FetchMoviesResponse> fetchPopularMovies(int pageNumber) async {

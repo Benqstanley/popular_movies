@@ -7,6 +7,7 @@ import 'package:popular_movies/bloc/popular_movies_bloc.dart';
 import 'package:popular_movies/main.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 import 'package:popular_movies/ui/movie_details_page.dart';
+import 'package:popular_movies/ui/resources.dart';
 
 class MovieListPage extends StatefulWidget {
   @override
@@ -19,7 +20,6 @@ class _MovieListPageState extends State<MovieListPage> {
   final TextEditingController searchValueController = TextEditingController();
   MovieState currentState;
   List<MovieOverview> movies;
-  bool isSmall;
 
   //This variable will only be used for larger screens;
   MovieOverview selectedMovie;
@@ -32,7 +32,6 @@ class _MovieListPageState extends State<MovieListPage> {
 
   @override
   Widget build(BuildContext context) {
-    isSmall = MediaQuery.of(context).size.width < 600;
     return Scaffold(
       appBar: AppBar(
         title: Text("Popular Movies"),
@@ -85,20 +84,20 @@ class _MovieListPageState extends State<MovieListPage> {
 
   Widget movieItem(MovieOverview overview) {
     return ListTile(
-      title: Text(overview.title),
+      title: Text(overview.title, style: TextStyle(fontSize: 16 * Resources.scaleFactor),),
       trailing: Icon(Icons.arrow_right),
       leading: CircleAvatar(
         backgroundColor: determineColor(overview.voteAverage),
         child: Text(
           "${overview.voteAverage}",
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 16 * Resources.scaleFactor,
             color: Colors.black,
           ),
         ),
       ),
       onTap: () {
-        isSmall
+        Resources.isSmall
             ? PopularMoviesApp.router.navigateTo(context, "/movie",
                 routeSettings: RouteSettings(arguments: overview))
             : setState(() {
@@ -140,7 +139,7 @@ class _MovieListPageState extends State<MovieListPage> {
   }
 
   Widget buildBody() {
-    return isSmall ?? true
+    return Resources.isSmall ?? true
         ? buildMovieListBody()
         : Row(
             children: [
@@ -151,7 +150,6 @@ class _MovieListPageState extends State<MovieListPage> {
               Expanded(
                 child: MovieDetailsPage(
                   key: UniqueKey(),
-                  largerSize: true,
                   selectedMovie: selectedMovie ?? movies?.first,
                 ),
               )
