@@ -56,6 +56,7 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
             currentPage: currentPage,
             maxReached: popularMovies.length >= response.total,
           );
+          return;
         } else {
           hasError = true;
           yield ErrorState(
@@ -63,6 +64,7 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
             event,
             hasResults: popularMovies.isNotEmpty,
           );
+          return;
         }
       }
     } else if (event is SearchEvent) {
@@ -75,6 +77,7 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
           movies: searchResults,
           maxReached: true,
         );
+        return;
       } else {
         hasError = true;
         yield ErrorState(
@@ -82,6 +85,7 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
           event,
           hasResults: popularMovies.isNotEmpty,
         );
+        return;
       }
     }
     return;
