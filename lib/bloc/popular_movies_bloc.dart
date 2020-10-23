@@ -29,7 +29,6 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
 
   @override
   Stream<MovieState> mapEventToState(MovieEvent event) async* {
-    print(event);
     if (tmdbapi == null) tmdbapi = GetIt.I<TMDBAPI>();
     if (event is ShowWhatWeHaveEvent) {
       yield LoadedState(

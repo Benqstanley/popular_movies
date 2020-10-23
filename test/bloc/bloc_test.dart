@@ -10,11 +10,11 @@ import '../api/mock_tmdb_api.dart';
 
 void main() {
   PopularMoviesBloc bloc;
-  setUp((){
+  setUp(() {
     bloc = PopularMoviesBloc(InitialState());
   });
 
-  tearDown((){
+  tearDown(() {
     bloc?.close();
     GetIt.I.reset();
   });
@@ -53,5 +53,22 @@ void main() {
     verify(GetIt.I<TMDBAPI>().search(any));
   });
 
+  test(
+      "Bloc test: Fetch Popular Movies, show error after first load, then show old results",
+      () async {
+    GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.successOnce());
+    bloc.add(FetchEvent(1));
+    await Future.delayed(Duration(milliseconds: 100));
 
+    expect(bloc.state, LoadedState(currentPage: 1));
+    bloc.add(FetchEvent(2));
+    await Future.delayed(Duration(milliseconds: 100));
+
+    expect(bloc.state is ErrorState, true);
+    bloc.add(ShowWhatWeHaveEvent());
+    await Future.delayed(Duration(milliseconds: 100));
+
+    expect(bloc.state is LoadedState, true);
+    verify(GetIt.I<TMDBAPI>().fetchPopularMovies(any));
+  });
 }
