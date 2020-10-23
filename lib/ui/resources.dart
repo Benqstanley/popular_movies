@@ -4,6 +4,9 @@ class Resources{
   static String get votesHeader => "Votes:";
 
 
+  static String get failedToLoadPopularMovies => "Failed To Load Popular Movies";
+  static String get failedToFindSearchResults => "Failed To Load Search Results";
+
   static double get posterWidth => 184;
   static double get posterHeight => 278;
 

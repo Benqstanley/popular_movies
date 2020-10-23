@@ -134,11 +134,11 @@ class _MovieListPageState extends State<MovieListPage> {
         title: Text("Popular Movies"),
       ),
       body: BlocBuilder<PopularMoviesBloc, MovieState>(
-        cubit: GetIt.I<PopularMoviesBloc>()..printKey(),
+        cubit: GetIt.I<PopularMoviesBloc>(),
         builder: (context, state) {
           currentState = state;
           if (state is ErrorState) {
-            return Center(child: Text("There has been a problem"));
+            return Center(child: Text(state.errorDescription));
           } else if (state is LoadedState) {
             return buildMovieListBody(state.movies);
           } else if (state is InitialState) {

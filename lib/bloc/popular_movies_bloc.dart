@@ -6,6 +6,7 @@ import 'package:popular_movies/bloc/movie_events.dart';
 import 'package:popular_movies/bloc/movie_states.dart';
 import 'package:popular_movies/model/fetch_movies_response.dart';
 import 'package:popular_movies/model/movie_overview.dart';
+import 'package:popular_movies/ui/resources.dart';
 
 /// This class responds to events to trigger api calls.
 /// It maintains the results of those calls and passes that information to the UI
@@ -46,7 +47,7 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
             maxReached: popularMovies.length >= response.total,
           );
         } else {
-          yield ErrorState("Failed To Load Popular Movies");
+          yield ErrorState(Resources.failedToLoadPopularMovies);
         }
       }
     } else if (event is SearchEvent) {
@@ -59,7 +60,7 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
           maxReached: true,
         );
       } else {
-        yield ErrorState("Failed To Find Search Results");
+        yield ErrorState(Resources.failedToFindSearchResults);
       }
     }
     return;
