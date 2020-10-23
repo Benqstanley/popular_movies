@@ -5,15 +5,17 @@ import 'package:popular_movies/model/fetch_movies_response.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 
 class TMDBAPI {
-  //TODO: INPUT YOUR OWN API KEY
-  static final String _apiKey = "INSERT API KEY HERE";
+  static final String _apiKey = "4ff9d08260ed338797caa272d7df35dd";
+
   TMDBAPI();
 
   Future<FetchMoviesResponse> fetchPopularMovies(int pageNumber) async {
     pageNumber = pageNumber ?? 1;
+    print('trying');
     try {
       final response = await get("http://api.themoviedb.org/3/discover/movie"
-          "?sort_by=popularity.desc&page=$pageNumber&api_key=$_apiKey");
+              "?sort_by=popularity.desc&page=$pageNumber&api_key=$_apiKey")
+          .timeout(Duration(seconds: 3));
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonMap = json.decode(response.body);
         if (jsonMap.containsKey("results")) {
@@ -22,7 +24,9 @@ class TMDBAPI {
                 .map<MovieOverview>((movieMap) {
               return MovieOverview.fromJson(movieMap);
             }).toList(),
-            total: jsonMap.containsKey("total_results") ? jsonMap["total_results"] : 0,
+            total: jsonMap.containsKey("total_results")
+                ? jsonMap["total_results"]
+                : 0,
           );
         }
       }
@@ -42,18 +46,24 @@ class TMDBAPI {
   }*/
 
   Future<List<MovieOverview>> search(String searchTerm) async {
-    final response = await get("https://api.themoviedb.org/3/search/"
-        "movie?api_key=$_apiKey&language=en-US&query=${_prepareSearchTerm(searchTerm)}&page=1&include_adult=false");
-    if (response.statusCode == 200) {
-      Map<String, dynamic> jsonMap = json.decode(response.body);
-      if (jsonMap.containsKey("results")) {
-        return (jsonMap["results"] as List<dynamic>)
-            .map<MovieOverview>((movieMap) {
-          return MovieOverview.fromJson(movieMap);
-        }).toList();
+    try {
+      final response = await get("https://api.themoviedb.org/3/search/"
+          "movie?api_key=$_apiKey&language=en-US&query=${_prepareSearchTerm(
+          searchTerm)}&page=1&include_adult=false")
+          .timeout(Duration(seconds: 3));
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonMap = json.decode(response.body);
+        if (jsonMap.containsKey("results")) {
+          return (jsonMap["results"] as List<dynamic>)
+              .map<MovieOverview>((movieMap) {
+            return MovieOverview.fromJson(movieMap);
+          }).toList();
+        }
       }
+      return null;
+    }catch (error){
+      return null;
     }
-    return null;
   }
 
   String _prepareSearchTerm(String searchTerm) {

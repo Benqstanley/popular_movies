@@ -18,6 +18,7 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
   TMDBAPI tmdbapi;
   int currentPage = 0;
   bool fetchInProgress = false;
+  bool hasError = false;
   final Key key = UniqueKey();
 
   void printKey() {
@@ -29,6 +30,14 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
   @override
   Stream<MovieState> mapEventToState(MovieEvent event) async* {
     if (tmdbapi == null) tmdbapi = GetIt.I<TMDBAPI>();
+    if (event is ShowWhatWeHaveEvent) {
+      yield LoadedState(
+        movies: popularMovies,
+        currentPage: currentPage,
+      );
+      return;
+    }
+    if (hasError || event is SearchEvent) yield LoadingState();
     if (event is FetchEvent) {
       if (event?.pageNumber != null &&
           event.pageNumber > currentPage &&
@@ -41,13 +50,18 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
         if (nextPage != null && nextPage.isNotEmpty) {
           popularMovies.addAll(nextPage);
           currentPage = event.pageNumber;
+          hasError = false;
           yield LoadedState(
             movies: popularMovies,
             currentPage: currentPage,
             maxReached: popularMovies.length >= response.total,
           );
         } else {
-          yield ErrorState(Resources.failedToLoadPopularMovies);
+          hasError = true;
+          yield ErrorState(
+            Resources.failedToLoadPopularMovies,
+            event,
+          );
         }
       }
     } else if (event is SearchEvent) {
@@ -55,12 +69,17 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
         event.searchQuery,
       );
       if (searchResults != null && searchResults.isNotEmpty) {
+        hasError = false;
         yield LoadedState(
           movies: searchResults,
           maxReached: true,
         );
       } else {
-        yield ErrorState(Resources.failedToFindSearchResults);
+        hasError = true;
+        yield ErrorState(
+          Resources.failedToFindSearchResults,
+          event,
+        );
       }
     }
     return;

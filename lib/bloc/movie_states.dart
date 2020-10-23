@@ -1,15 +1,20 @@
 import 'package:equatable/equatable.dart';
+import 'package:popular_movies/bloc/movie_events.dart';
 import 'package:popular_movies/bloc/popular_movies_bloc.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 
 /// States that the [PopularMoviesBloc] will provide to the UI.
 
-abstract class MovieState extends Equatable{}
+abstract class MovieState extends Equatable {}
 
 class ErrorState extends MovieState {
   final String errorDescription;
+  final MovieEvent offendingEvent;
 
-  ErrorState(this.errorDescription);
+  ErrorState(
+    this.errorDescription,
+    this.offendingEvent,
+  );
 
   @override
   List<Object> get props => [errorDescription];

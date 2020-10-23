@@ -41,7 +41,34 @@ class _MovieListPageState extends State<MovieListPage> {
         builder: (context, state) {
           currentState = state;
           if (state is ErrorState) {
-            return Center(child: Text(state.errorDescription));
+            return Center(
+                child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(state.errorDescription),
+                InkWell(
+                  child: Text(
+                    Resources.tapHereToTryAgain,
+                    style: TextStyle(decoration: TextDecoration.underline),
+                  ),
+                  onTap: () {
+                    GetIt.I<PopularMoviesBloc>().add(state.offendingEvent);
+                  },
+                ),
+                Container(height: 16),
+                InkWell(
+                  child: Text(
+                    "Show What We Already Have",
+                    style: TextStyle(decoration: TextDecoration.underline),
+                  ),
+                  onTap: () {
+                    GetIt.I<PopularMoviesBloc>().add(ShowWhatWeHaveEvent());
+                  },
+                ),
+              ],
+            ));
           } else if (state is LoadedState) {
             movies = state.movies;
             return buildBody();
@@ -84,7 +111,10 @@ class _MovieListPageState extends State<MovieListPage> {
 
   Widget movieItem(MovieOverview overview) {
     return ListTile(
-      title: Text(overview.title, style: TextStyle(fontSize: 16 * Resources.scaleFactor),),
+      title: Text(
+        overview.title,
+        style: TextStyle(fontSize: 16 * Resources.scaleFactor),
+      ),
       trailing: Icon(Icons.arrow_right),
       leading: CircleAvatar(
         backgroundColor: determineColor(overview.voteAverage),
@@ -126,8 +156,7 @@ class _MovieListPageState extends State<MovieListPage> {
                     icon: Icon(Icons.close),
                     onPressed: () {
                       searchValueController.clear();
-                      GetIt.I<PopularMoviesBloc>().add(FetchEvent(
-                          (currentState as LoadedState).currentPage));
+                      GetIt.I<PopularMoviesBloc>().add(ShowWhatWeHaveEvent());
                     },
                   )),
               controller: searchValueController,

@@ -16,3 +16,7 @@ class SearchEvent extends MovieEvent {
 
   SearchEvent(this.searchQuery);
 }
+
+class ShowWhatWeHaveEvent extends MovieEvent{
+
+}
