@@ -58,7 +58,7 @@ class _MovieListPageState extends State<MovieListPage> {
                   },
                 ),
                 Container(height: 16),
-                InkWell(
+                if(state.hasResults) InkWell(
                   child: Text(
                     "Show What We Already Have",
                     style: TextStyle(decoration: TextDecoration.underline),

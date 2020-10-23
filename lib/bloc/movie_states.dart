@@ -10,11 +10,13 @@ abstract class MovieState extends Equatable {}
 class ErrorState extends MovieState {
   final String errorDescription;
   final MovieEvent offendingEvent;
+  final bool hasResults;
 
   ErrorState(
     this.errorDescription,
-    this.offendingEvent,
-  );
+    this.offendingEvent, {
+    this.hasResults = true,
+  });
 
   @override
   List<Object> get props => [errorDescription];

@@ -61,6 +61,7 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
           yield ErrorState(
             Resources.failedToLoadPopularMovies,
             event,
+            hasResults: popularMovies.isNotEmpty,
           );
         }
       }
@@ -79,6 +80,7 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
         yield ErrorState(
           Resources.failedToFindSearchResults,
           event,
+          hasResults: popularMovies.isNotEmpty,
         );
       }
     }
