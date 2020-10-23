@@ -73,6 +73,7 @@ void main() {
     await tester.pump(Duration(milliseconds: 100));
     await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(ListTile), findsWidgets);
+    await tester.showKeyboard(find.byType(TextField));
     await tester.enterText(find.byType(TextField), "Jack Reacher");
     expect(find.byWidgetPredicate((widget) {
       if (widget is TextField) {
@@ -95,6 +96,7 @@ void main() {
     await tester.pump(Duration(milliseconds: 100));
     await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(ListTile), findsWidgets);
+    await tester.showKeyboard(find.byType(TextField));
     await tester.enterText(find.byType(TextField), "Jack Reacher");
     expect(find.byWidgetPredicate((widget) {
       if (widget is TextField) {
