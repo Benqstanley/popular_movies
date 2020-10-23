@@ -4,13 +4,12 @@ A Flutter Application to view the most popular movies (TMDB*)
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+##To run this application:
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+-Clone the git repository.
+-Open it up in your favorite Flutter-capable IDE.
+-Navigate to lib/api/tmdb_api.dart and modify line 9 by putting your own TMDB API key.
+-Run 'flutter pub get'
+-Open your simulator.
+-Compile.
+-Enjoy!
