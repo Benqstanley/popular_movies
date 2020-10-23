@@ -36,15 +36,6 @@ class TMDBAPI {
     }
   }
 
-/*  Future<Map<String, dynamic>> fetchMovieDetails(int id) async {
-    final response =
-        await get("https://api.themoviedb.org/3/movie/$id?api_key=$_apiKey");
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    }
-    return null;
-  }*/
-
   Future<List<MovieOverview>> search(String searchTerm) async {
     try {
       final response = await get("https://api.themoviedb.org/3/search/"

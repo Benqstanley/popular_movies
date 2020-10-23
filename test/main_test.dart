@@ -6,18 +6,18 @@ import 'package:popular_movies/api/tmdb_api.dart';
 import 'package:popular_movies/bloc/movie_states.dart';
 import 'package:popular_movies/bloc/popular_movies_bloc.dart';
 import 'package:popular_movies/main.dart';
+import 'package:popular_movies/ui/custom_progress_indicator.dart';
 import 'package:popular_movies/ui/movie_details_page.dart';
 import 'package:popular_movies/ui/movie_list_page.dart';
 import 'package:popular_movies/ui/resources.dart';
 
 import 'api/mock_tmdb_api.dart';
 import 'bloc/mock_popular_movies_bloc.dart';
-import 'test_cache_manager.dart';
 
 void main() {
   setUp(() {
+    GetIt.I.registerSingleton<BaseCacheManager>(DefaultCacheManager());
     GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.success());
-    GetIt.I.registerSingleton<BaseCacheManager>(TestCacheManager.successfulImageLoad());
   });
 
   tearDown(() {
@@ -46,15 +46,7 @@ void main() {
 
     //The first movie in the mocked response
     expect(find.text("2067"), findsWidgets);
-    expect(find.byWidgetPredicate((widget){
-      print(widget);
-      return false;
-    }), findsNothing);
-    expect(find.byType(BackButton), findsOneWidget);
-    await tester.tap(find.byType(BackButton));
-    await tester.pump(Duration(milliseconds: 100));
-    await tester.pumpAndSettle();
-    expect(find.byType(MovieDetailsPage), findsNothing);
+    expect(find.byType(CustomProgressIndicator), findsOneWidget);
   });
 
   testWidgets('PopularMoviesApp Popular Failure', (WidgetTester tester) async {

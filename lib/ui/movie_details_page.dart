@@ -35,9 +35,11 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.selectedMovie.title),
-        ),
+        appBar: MediaQuery.of(context).size.height < 600
+            ? null
+            : AppBar(
+                title: Text(widget.selectedMovie.title),
+              ),
         body: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
