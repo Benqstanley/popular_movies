@@ -37,14 +37,6 @@ void main() {
     await tester.pump(Duration(milliseconds: 100));
     await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(MovieDetailsPage), findsOneWidget);
-    await tester.pump(Duration(milliseconds: 1500));
-    //The first movie in the mocked response
-    expect(find.text("2067"), findsWidgets);
-    expect(find.byType(BackButton), findsOneWidget);
-    await tester.tap(find.byType(BackButton));
-    await tester.pump(Duration(milliseconds: 100));
-    await tester.pumpAndSettle();
-    expect(find.byType(MovieDetailsPage), findsNothing);
   });
 
   testWidgets('PopularMoviesApp Popular Failure', (WidgetTester tester) async {
@@ -72,6 +64,7 @@ void main() {
     await tester.pump(Duration(milliseconds: 100));
     await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(ListTile), findsWidgets);
+    await tester.showKeyboard(find.byType(TextField));
     await tester.enterText(find.byType(TextField), "Jack Reacher");
     expect(find.byWidgetPredicate((widget){
       if(widget is TextField){
@@ -94,6 +87,7 @@ void main() {
     await tester.pump(Duration(milliseconds: 100));
     await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(ListTile), findsWidgets);
+    await tester.showKeyboard(find.byType(TextField));
     await tester.enterText(find.byType(TextField), "Jack Reacher");
     expect(find.byWidgetPredicate((widget){
       if(widget is TextField){
