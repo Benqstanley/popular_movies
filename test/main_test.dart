@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:popular_movies/api/tmdb_api.dart';
+import 'package:popular_movies/bloc/movie_states.dart';
 import 'package:popular_movies/bloc/popular_movies_bloc.dart';
 import 'package:popular_movies/main.dart';
 import 'package:popular_movies/ui/movie_details_page.dart';
@@ -58,7 +59,6 @@ void main() {
     expect(find.text(Resources.failedToLoadPopularMovies), findsOneWidget);
   });
 
-
   /// Upon running the app a query is fired to fetch popular movies
   /// When one of the resulting tiles is tapped the user is taken to the
   /// Movie Details Page for the associated movie.
@@ -73,8 +73,8 @@ void main() {
     await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(ListTile), findsWidgets);
     await tester.enterText(find.byType(TextField), "Jack Reacher");
-    expect(find.byWidgetPredicate((widget){
-      if(widget is TextField){
+    expect(find.byWidgetPredicate((widget) {
+      if (widget is TextField) {
         widget.onSubmitted("Jack Reacher");
         return true;
       }
@@ -95,8 +95,8 @@ void main() {
     await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(ListTile), findsWidgets);
     await tester.enterText(find.byType(TextField), "Jack Reacher");
-    expect(find.byWidgetPredicate((widget){
-      if(widget is TextField){
+    expect(find.byWidgetPredicate((widget) {
+      if (widget is TextField) {
         widget.onSubmitted("Jack Reacher");
         return true;
       }
@@ -107,5 +107,20 @@ void main() {
     await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(ListTile), findsNothing);
     expect(find.text(Resources.failedToFindSearchResults), findsOneWidget);
+  });
+
+  /// Attempt to use non-mocked bloc
+  /// Upon running the app a query is fired to fetch popular movies
+  /// When one of the resulting tiles is tapped the user is taken to the
+  /// Movie Details Page for the associated movie.
+  /// The user can then navigate back to the Movie List Page
+
+  testWidgets('Real Bloc', (WidgetTester tester) async {
+    GetIt.I.registerSingleton<PopularMoviesBloc>(
+        PopularMoviesBloc(InitialState()));
+    await tester.pumpWidget(PopularMoviesApp());
+    expect(find.byType(MovieListPage), findsOneWidget);
+    await tester.pump(Duration(milliseconds: 100));
+    expect(find.byType(ListTile), findsWidgets);
   });
 }

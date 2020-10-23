@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:get_it/get_it.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 import 'package:popular_movies/ui/custom_progress_indicator.dart';
 import 'package:popular_movies/ui/resources.dart';
@@ -46,6 +48,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                   height: 8,
                 ),
                 CachedNetworkImage(
+                  //cacheManager: GetIt.I<BaseCacheManager>(),
                   imageBuilder: (context, provider) {
                     provider
                         .resolve(ImageConfiguration())

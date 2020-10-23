@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:mockito/mockito.dart';
 import 'package:popular_movies/bloc/movie_events.dart';
 import 'package:popular_movies/bloc/movie_states.dart';
 import 'package:popular_movies/bloc/popular_movies_bloc.dart';
@@ -75,6 +76,16 @@ class MockPopularMoviesBloc extends MockBloc<MovieState>
               Resources.failedToFindSearchResults, SearchEvent("TEST")))
     ]);
     whenListen(mockBloc, stream);
+    return mockBloc;
+  }
+
+  factory MockPopularMoviesBloc.loadedState() {
+    MockPopularMoviesBloc mockBloc = MockPopularMoviesBloc();
+    when(mockBloc.state).thenAnswer((_) => LoadedState(
+          currentPage: 1,
+          movies: MockTMBDAPI.discoverList,
+          maxReached: false,
+        ));
     return mockBloc;
   }
 }

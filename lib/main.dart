@@ -1,5 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get_it/get_it.dart';
 import 'package:popular_movies/api/tmdb_api.dart';
 import 'package:popular_movies/bloc/movie_states.dart';
@@ -13,6 +14,7 @@ void main() {
   GetIt.I
       .registerSingleton<PopularMoviesBloc>(PopularMoviesBloc(InitialState()));
   GetIt.I.registerSingleton<TMDBAPI>(TMDBAPI());
+  GetIt.I.registerSingleton<BaseCacheManager>(DefaultCacheManager());
   runApp(PopularMoviesApp());
 }
 
