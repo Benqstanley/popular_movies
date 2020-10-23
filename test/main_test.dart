@@ -6,6 +6,7 @@ import 'package:popular_movies/bloc/popular_movies_bloc.dart';
 import 'package:popular_movies/main.dart';
 import 'package:popular_movies/ui/movie_details_page.dart';
 import 'package:popular_movies/ui/movie_list_page.dart';
+import 'package:popular_movies/ui/resources.dart';
 
 import 'api/mock_tmdb_api.dart';
 import 'bloc/mock_popular_movies_bloc.dart';
@@ -27,7 +28,7 @@ void main() {
 
   testWidgets('PopularMoviesApp List Test', (WidgetTester tester) async {
     GetIt.I.registerSingleton<PopularMoviesBloc>(
-        MockPopularMoviesBloc.loadedState());
+        MockPopularMoviesBloc.successfulLoad());
     await tester.pumpWidget(PopularMoviesApp());
     expect(find.byType(MovieListPage), findsOneWidget);
     await tester.pump(Duration(milliseconds: 100));
@@ -46,6 +47,17 @@ void main() {
     expect(find.byType(MovieDetailsPage), findsNothing);
   });
 
+  testWidgets('PopularMoviesApp Popular Failure', (WidgetTester tester) async {
+    GetIt.I.registerSingleton<PopularMoviesBloc>(
+        MockPopularMoviesBloc.failedLoad());
+    await tester.pumpWidget(PopularMoviesApp());
+    expect(find.byType(MovieListPage), findsOneWidget);
+    await tester.pump(Duration(milliseconds: 100));
+    await tester.pump(Duration(milliseconds: 100));
+    expect(find.byType(ListTile), findsNothing);
+    expect(find.text(Resources.failedToLoadPopularMovies), findsOneWidget);
+  });
+
 
   /// Upon running the app a query is fired to fetch popular movies
   /// When one of the resulting tiles is tapped the user is taken to the
@@ -54,7 +66,7 @@ void main() {
 
   testWidgets('PopularMoviesApp Search List Test', (WidgetTester tester) async {
     GetIt.I.registerSingleton<PopularMoviesBloc>(
-        MockPopularMoviesBloc.searchState());
+        MockPopularMoviesBloc.successfulSearch());
     await tester.pumpWidget(PopularMoviesApp());
     expect(find.byType(MovieListPage), findsOneWidget);
     await tester.pump(Duration(milliseconds: 100));
@@ -72,5 +84,28 @@ void main() {
     await tester.pump(Duration(milliseconds: 100));
     await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(ListTile), findsNWidgets(2));
+  });
+
+  testWidgets('PopularMoviesApp Search Failure', (WidgetTester tester) async {
+    GetIt.I.registerSingleton<PopularMoviesBloc>(
+        MockPopularMoviesBloc.failedSearch());
+    await tester.pumpWidget(PopularMoviesApp());
+    expect(find.byType(MovieListPage), findsOneWidget);
+    await tester.pump(Duration(milliseconds: 100));
+    await tester.pump(Duration(milliseconds: 100));
+    expect(find.byType(ListTile), findsWidgets);
+    await tester.enterText(find.byType(TextField), "Jack Reacher");
+    expect(find.byWidgetPredicate((widget){
+      if(widget is TextField){
+        widget.onSubmitted("Jack Reacher");
+        return true;
+      }
+      return false;
+    }), findsOneWidget);
+    await tester.pump(Duration(milliseconds: 100));
+    await tester.pump(Duration(milliseconds: 100));
+    await tester.pump(Duration(milliseconds: 100));
+    expect(find.byType(ListTile), findsNothing);
+    expect(find.text(Resources.failedToFindSearchResults), findsOneWidget);
   });
 }

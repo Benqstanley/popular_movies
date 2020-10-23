@@ -80,4 +80,13 @@ class MockTMBDAPI extends Mock implements TMDBAPI {
     when(api.search(any)).thenAnswer((realInvocation) async => searchList);
     return api;
   }
+
+  factory MockTMBDAPI.failure() {
+    var api = MockTMBDAPI();
+    when(api.fetchPopularMovies(any)).thenAnswer((realInvocation) async {
+      return null;
+    });
+    when(api.search(any)).thenAnswer((realInvocation) async => null);
+    return api;
+  }
 }

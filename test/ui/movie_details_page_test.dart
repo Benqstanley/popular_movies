@@ -9,7 +9,7 @@ import '../bloc/mock_popular_movies_bloc.dart';
 void main (){
   setUp((){
     GetIt.I.registerSingleton<PopularMoviesBloc>(
-        MockPopularMoviesBloc.loadedState());
+        MockPopularMoviesBloc.successfulLoad());
     GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.success());
   });
 

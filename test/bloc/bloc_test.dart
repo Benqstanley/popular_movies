@@ -11,17 +11,16 @@ import '../api/mock_tmdb_api.dart';
 void main() {
   PopularMoviesBloc bloc;
   setUp((){
-    GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.success());
     bloc = PopularMoviesBloc(InitialState());
   });
 
   tearDown((){
-    GetIt.I.reset();
     bloc?.close();
+    GetIt.I.reset();
   });
 
   test("Bloc test: Fetch Popular Movies", () async {
-    bloc = PopularMoviesBloc(InitialState());
+    GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.success());
     bloc.add(FetchEvent(1));
     var state = await bloc.first;
     expect(state, LoadedState(currentPage: 1));
@@ -29,12 +28,28 @@ void main() {
     verify(GetIt.I<TMDBAPI>().fetchPopularMovies(any));
   });
 
-  test("Bloc test: Fetch Popular Movies", () async {
-    bloc = PopularMoviesBloc(InitialState());
+  test("Bloc test: Search Movies", () async {
+    GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.success());
     bloc.add(SearchEvent("Jack Reacher"));
     var state = await bloc.first;
     expect(state is LoadedState, true);
     expect((state as LoadedState).movies.length, 2);
+    verify(GetIt.I<TMDBAPI>().search(any));
+  });
+
+  test("Bloc test: Fetch Popular Movies, failure", () async {
+    GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.failure());
+    bloc.add(FetchEvent(1));
+    var state = await bloc.first;
+    expect(state is ErrorState, true);
+    verify(GetIt.I<TMDBAPI>().fetchPopularMovies(any));
+  });
+
+  test("Bloc test: Search Movies, failure", () async {
+    GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.failure());
+    bloc.add(SearchEvent("Jack Reacher"));
+    var state = await bloc.first;
+    expect(state is ErrorState, true);
     verify(GetIt.I<TMDBAPI>().search(any));
   });
 
