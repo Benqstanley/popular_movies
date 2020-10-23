@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -17,7 +19,9 @@ class MovieListPage extends StatefulWidget {
 class _MovieListPageState extends State<MovieListPage> {
   final _scrollController = ScrollController();
   final _scrollThreshold = 200.0;
+  double _scrollPosition;
   final TextEditingController searchValueController = TextEditingController();
+  MovieState previousState;
   MovieState currentState;
   List<MovieOverview> movies;
 
@@ -39,6 +43,7 @@ class _MovieListPageState extends State<MovieListPage> {
       body: BlocBuilder<PopularMoviesBloc, MovieState>(
         cubit: GetIt.I<PopularMoviesBloc>(),
         builder: (context, state) {
+          previousState = currentState;
           currentState = state;
           if (state is ErrorState) {
             return Center(
@@ -58,18 +63,24 @@ class _MovieListPageState extends State<MovieListPage> {
                   },
                 ),
                 Container(height: 16),
-                if(state.hasResults) InkWell(
-                  child: Text(
-                    Resources.showWhatWeHave,
-                    style: TextStyle(decoration: TextDecoration.underline),
+                if (state.hasResults)
+                  InkWell(
+                    child: Text(
+                      Resources.showWhatWeHave,
+                      style: TextStyle(decoration: TextDecoration.underline),
+                    ),
+                    onTap: () {
+                      GetIt.I<PopularMoviesBloc>().add(ShowWhatWeHaveEvent());
+                    },
                   ),
-                  onTap: () {
-                    GetIt.I<PopularMoviesBloc>().add(ShowWhatWeHaveEvent());
-                  },
-                ),
               ],
             ));
           } else if (state is LoadedState) {
+            if (_scrollPosition != null && previousState is ErrorState) {
+              WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                _scrollController.jumpTo(_scrollPosition);
+              });
+            }
             movies = state.movies;
             return buildBody();
           } else if (state is InitialState) {
@@ -88,6 +99,7 @@ class _MovieListPageState extends State<MovieListPage> {
   void _onScroll() {
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.position.pixels;
+    _scrollPosition = max(_scrollController.offset - _scrollThreshold, 0);
     if (maxScroll - currentScroll <= _scrollThreshold &&
         currentState is LoadedState) {
       GetIt.I<PopularMoviesBloc>()
