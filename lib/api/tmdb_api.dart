@@ -12,7 +12,6 @@ class TMDBAPI {
 
   Future<FetchMoviesResponse> fetchPopularMovies(int pageNumber) async {
     pageNumber = pageNumber ?? 1;
-    print('trying');
     try {
       final response = await get("http://api.themoviedb.org/3/discover/movie"
               "?sort_by=popularity.desc&page=$pageNumber&api_key=$_apiKey")

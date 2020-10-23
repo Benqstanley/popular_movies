@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:get_it/get_it.dart';
 import 'package:popular_movies/api/tmdb_api.dart';
@@ -11,10 +12,12 @@ import 'package:popular_movies/ui/resources.dart';
 
 import 'api/mock_tmdb_api.dart';
 import 'bloc/mock_popular_movies_bloc.dart';
+import 'test_cache_manager.dart';
 
 void main() {
   setUp(() {
     GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.success());
+    GetIt.I.registerSingleton<BaseCacheManager>(TestCacheManager.successfulImageLoad());
   });
 
   tearDown(() {
@@ -39,8 +42,14 @@ void main() {
     await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(MovieDetailsPage), findsOneWidget);
     await tester.pump(Duration(milliseconds: 1500));
+    await tester.pumpAndSettle();
+
     //The first movie in the mocked response
     expect(find.text("2067"), findsWidgets);
+    expect(find.byWidgetPredicate((widget){
+      print(widget);
+      return false;
+    }), findsNothing);
     expect(find.byType(BackButton), findsOneWidget);
     await tester.tap(find.byType(BackButton));
     await tester.pump(Duration(milliseconds: 100));

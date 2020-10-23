@@ -11,6 +11,7 @@ import 'package:popular_movies/ui/movie_list_page.dart';
 import 'package:popular_movies/ui/resources.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   GetIt.I
       .registerSingleton<PopularMoviesBloc>(PopularMoviesBloc(InitialState()));
   GetIt.I.registerSingleton<TMDBAPI>(TMDBAPI());

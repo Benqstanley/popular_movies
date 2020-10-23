@@ -48,7 +48,7 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                   height: 8,
                 ),
                 CachedNetworkImage(
-                  //cacheManager: GetIt.I<BaseCacheManager>(),
+                  cacheManager: GetIt.I<BaseCacheManager>(),
                   imageBuilder: (context, provider) {
                     provider
                         .resolve(ImageConfiguration())
@@ -79,7 +79,16 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                     return SizedBox(
                       height: posterHeight,
                       width: posterWidth,
-                      child: Center(child: CircularProgressIndicator()),
+                      child: Center(child: Text("Loading...")),
+                    );
+                  },
+                  errorWidget: (context, string, ex) {
+                    return SizedBox(
+                      height: posterHeight,
+                      width: posterWidth,
+                      child: Center(
+                        child: Text("Network Error"),
+                      ),
                     );
                   },
                 ),
@@ -94,7 +103,8 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                         children: [
                           Text(
                             "${Resources.votesHeader} ${widget.selectedMovie.voteCount}",
-                            style: TextStyle(fontSize: 16 * Resources.scaleFactor),
+                            style:
+                                TextStyle(fontSize: 16 * Resources.scaleFactor),
                           ),
                           Container(
                             height: 4,
@@ -106,7 +116,8 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                               children: [
                                 Text(
                                   Resources.rating,
-                                  style: TextStyle(fontSize: 16 * Resources.scaleFactor),
+                                  style: TextStyle(
+                                      fontSize: 16 * Resources.scaleFactor),
                                 ),
                                 Expanded(
                                   child: CustomProgressIndicator(
@@ -122,8 +133,8 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                                 SizedBox(
                                   child: Text(
                                     progressString,
-                                    style:
-                                        TextStyle(fontSize: 16 * Resources.scaleFactor),
+                                    style: TextStyle(
+                                        fontSize: 16 * Resources.scaleFactor),
                                   ),
                                   width: 56 * Resources.scaleFactor,
                                 ),
