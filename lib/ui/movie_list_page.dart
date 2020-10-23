@@ -6,6 +6,7 @@ import 'package:popular_movies/bloc/movie_states.dart';
 import 'package:popular_movies/bloc/popular_movies_bloc.dart';
 import 'package:popular_movies/main.dart';
 import 'package:popular_movies/model/movie_overview.dart';
+import 'package:popular_movies/ui/movie_details_page.dart';
 
 class MovieListPage extends StatefulWidget {
   @override
@@ -17,11 +18,45 @@ class _MovieListPageState extends State<MovieListPage> {
   final _scrollThreshold = 200.0;
   final TextEditingController searchValueController = TextEditingController();
   MovieState currentState;
+  List<MovieOverview> movies;
+  bool isSmall;
+
+  //This variable will only be used for larger screens;
+  MovieOverview selectedMovie;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    isSmall = MediaQuery.of(context).size.width < 600;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Popular Movies"),
+      ),
+      body: BlocBuilder<PopularMoviesBloc, MovieState>(
+        cubit: GetIt.I<PopularMoviesBloc>(),
+        builder: (context, state) {
+          currentState = state;
+          if (state is ErrorState) {
+            return Center(child: Text(state.errorDescription));
+          } else if (state is LoadedState) {
+            movies = state.movies;
+            return buildBody();
+          } else if (state is InitialState) {
+            GetIt.I<PopularMoviesBloc>().add(FetchEvent(1));
+            return Center(child: CircularProgressIndicator());
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        },
+      ),
+    );
   }
 
   void _onScroll() {
@@ -63,8 +98,12 @@ class _MovieListPageState extends State<MovieListPage> {
         ),
       ),
       onTap: () {
-        PopularMoviesApp.router.navigateTo(context, "/movie",
-            routeSettings: RouteSettings(arguments: overview));
+        isSmall
+            ? PopularMoviesApp.router.navigateTo(context, "/movie",
+                routeSettings: RouteSettings(arguments: overview))
+            : setState(() {
+                selectedMovie = overview;
+              });
       },
     );
   }
@@ -100,9 +139,28 @@ class _MovieListPageState extends State<MovieListPage> {
     );
   }
 
-  Widget buildMovieListBody(List<MovieOverview> movies) {
+  Widget buildBody() {
+    return isSmall ?? true
+        ? buildMovieListBody()
+        : Row(
+            children: [
+              Container(
+                child: buildMovieListBody(),
+                width: MediaQuery.of(context).size.width / 3,
+              ),
+              Expanded(
+                child: MovieDetailsPage(
+                  key: UniqueKey(),
+                  largerSize: true,
+                  selectedMovie: selectedMovie ?? movies?.first,
+                ),
+              )
+            ],
+          );
+  }
+
+  Widget buildMovieListBody() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.max,
       children: [
         buildSearchArea(),
@@ -124,33 +182,6 @@ class _MovieListPageState extends State<MovieListPage> {
           ),
         )
       ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Popular Movies"),
-      ),
-      body: BlocBuilder<PopularMoviesBloc, MovieState>(
-        cubit: GetIt.I<PopularMoviesBloc>(),
-        builder: (context, state) {
-          currentState = state;
-          if (state is ErrorState) {
-            return Center(child: Text(state.errorDescription));
-          } else if (state is LoadedState) {
-            return buildMovieListBody(state.movies);
-          } else if (state is InitialState) {
-            GetIt.I<PopularMoviesBloc>().add(FetchEvent(1));
-            return Center(child: CircularProgressIndicator());
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
     );
   }
 }
