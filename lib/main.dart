@@ -44,7 +44,7 @@ class _PopularMoviesAppState extends State<PopularMoviesApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Popular Movies',
+      title: Resources.title,
       theme: ThemeData(
           primarySwatch: Colors.orange,
           visualDensity: VisualDensity.adaptivePlatformDensity,
