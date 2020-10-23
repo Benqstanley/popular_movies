@@ -5,7 +5,8 @@ import 'package:popular_movies/model/fetch_movies_response.dart';
 import 'package:popular_movies/model/movie_overview.dart';
 
 class TMDBAPI {
-  static final String _apiKey = "4ff9d08260ed338797caa272d7df35dd";
+  //TODO: Input your own api key
+  static final String _apiKey = "ENTER API KEY HERE";
 
   TMDBAPI();
 
