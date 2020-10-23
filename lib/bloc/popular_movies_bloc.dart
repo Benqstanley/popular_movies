@@ -35,7 +35,7 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
         fetchInProgress = true;
         FetchMoviesResponse response =
             await tmdbapi.fetchPopularMovies(event.pageNumber);
-        List<MovieOverview> nextPage = response.popularMovies;
+        List<MovieOverview> nextPage = response?.popularMovies;
         fetchInProgress = false;
         if (nextPage != null && nextPage.isNotEmpty) {
           popularMovies.addAll(nextPage);

@@ -129,7 +129,6 @@ class _MovieListPageState extends State<MovieListPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('building list');
     return Scaffold(
       appBar: AppBar(
         title: Text("Popular Movies"),
@@ -137,7 +136,6 @@ class _MovieListPageState extends State<MovieListPage> {
       body: BlocBuilder<PopularMoviesBloc, MovieState>(
         cubit: GetIt.I<PopularMoviesBloc>()..printKey(),
         builder: (context, state) {
-          print(state);
           currentState = state;
           if (state is ErrorState) {
             return Center(child: Text("There has been a problem"));
