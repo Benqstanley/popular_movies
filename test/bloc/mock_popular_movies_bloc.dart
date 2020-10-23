@@ -1,4 +1,5 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:popular_movies/bloc/movie_events.dart';
 import 'package:popular_movies/bloc/movie_states.dart';
 import 'package:popular_movies/bloc/popular_movies_bloc.dart';
 import 'package:popular_movies/ui/resources.dart';
@@ -29,7 +30,10 @@ class MockPopularMoviesBloc extends MockBloc<MovieState>
         mockBloc,
         Stream.fromIterable([
           InitialState(),
-          ErrorState(Resources.failedToLoadPopularMovies),
+          ErrorState(
+            Resources.failedToLoadPopularMovies,
+            FetchEvent(1),
+          ),
         ]));
     return mockBloc;
   }
@@ -65,8 +69,10 @@ class MockPopularMoviesBloc extends MockBloc<MovieState>
                 movies: MockTMBDAPI.discoverList,
                 currentPage: 1,
               )),
-      Future.delayed(Duration(milliseconds: 300),
-          () => ErrorState(Resources.failedToFindSearchResults))
+      Future.delayed(
+          Duration(milliseconds: 300),
+          () => ErrorState(
+              Resources.failedToFindSearchResults, SearchEvent("TEST")))
     ]);
     whenListen(mockBloc, stream);
     return mockBloc;
