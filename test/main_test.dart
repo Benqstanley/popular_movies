@@ -16,7 +16,6 @@ import 'bloc/mock_popular_movies_bloc.dart';
 
 void main() {
   setUp(() {
-    GetIt.I.registerSingleton<BaseCacheManager>(DefaultCacheManager());
     GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.success());
   });
 
@@ -58,6 +57,7 @@ void main() {
     await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(ListTile), findsNothing);
     expect(find.text(Resources.failedToLoadPopularMovies), findsOneWidget);
+    expect(find.text(Resources.showWhatWeHave), findsOneWidget);
   });
 
   /// Upon running the app a query is fired to fetch popular movies
@@ -107,9 +107,9 @@ void main() {
     }), findsOneWidget);
     await tester.pump(Duration(milliseconds: 100));
     await tester.pump(Duration(milliseconds: 100));
-    await tester.pump(Duration(milliseconds: 100));
     expect(find.byType(ListTile), findsNothing);
     expect(find.text(Resources.failedToFindSearchResults), findsOneWidget);
+    expect(find.text(Resources.showWhatWeHave), findsNothing);
   });
 
   /// Attempt to use non-mocked bloc

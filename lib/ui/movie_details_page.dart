@@ -50,7 +50,6 @@ class _MovieDetailsPageState extends State<MovieDetailsPage> {
                   height: 8,
                 ),
                 CachedNetworkImage(
-                  cacheManager: GetIt.I<BaseCacheManager>(),
                   imageBuilder: (context, provider) {
                     provider
                         .resolve(ImageConfiguration())

@@ -15,7 +15,6 @@ void main() {
   GetIt.I
       .registerSingleton<PopularMoviesBloc>(PopularMoviesBloc(InitialState()));
   GetIt.I.registerSingleton<TMDBAPI>(TMDBAPI());
-  GetIt.I.registerSingleton<BaseCacheManager>(DefaultCacheManager());
   runApp(PopularMoviesApp());
 }
 

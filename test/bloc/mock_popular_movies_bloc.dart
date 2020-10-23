@@ -73,7 +73,10 @@ class MockPopularMoviesBloc extends MockBloc<MovieState>
       Future.delayed(
           Duration(milliseconds: 300),
           () => ErrorState(
-              Resources.failedToFindSearchResults, SearchEvent("TEST")))
+                Resources.failedToFindSearchResults,
+                SearchEvent("TEST"),
+                hasResults: false,
+              ))
     ]);
     whenListen(mockBloc, stream);
     return mockBloc;
