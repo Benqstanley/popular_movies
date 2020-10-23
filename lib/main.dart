@@ -29,7 +29,8 @@ class PopularMoviesApp extends StatefulWidget {
 class _PopularMoviesAppState extends State<PopularMoviesApp> {
   _PopularMoviesAppState() {
     FluroRouter router = FluroRouter();
-    router.define("/movie", handler: Handler(handlerFunc: (context, params) {
+    router.define(Resources.detailsPath,
+        handler: Handler(handlerFunc: (context, params) {
       return MovieDetailsPage(
         selectedMovie: context.settings.arguments as MovieOverview,
       );

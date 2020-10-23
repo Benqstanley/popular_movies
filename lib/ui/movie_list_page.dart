@@ -34,7 +34,7 @@ class _MovieListPageState extends State<MovieListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Popular Movies"),
+        title: Text(Resources.title),
       ),
       body: BlocBuilder<PopularMoviesBloc, MovieState>(
         cubit: GetIt.I<PopularMoviesBloc>(),
@@ -60,7 +60,7 @@ class _MovieListPageState extends State<MovieListPage> {
                 Container(height: 16),
                 if(state.hasResults) InkWell(
                   child: Text(
-                    "Show What We Already Have",
+                    Resources.showWhatWeHave,
                     style: TextStyle(decoration: TextDecoration.underline),
                   ),
                   onTap: () {
@@ -128,7 +128,7 @@ class _MovieListPageState extends State<MovieListPage> {
       ),
       onTap: () {
         Resources.isSmall
-            ? PopularMoviesApp.router.navigateTo(context, "/movie",
+            ? PopularMoviesApp.router.navigateTo(context, Resources.detailsPath,
                 routeSettings: RouteSettings(arguments: overview))
             : setState(() {
                 selectedMovie = overview;
@@ -150,7 +150,7 @@ class _MovieListPageState extends State<MovieListPage> {
                   GetIt.I<PopularMoviesBloc>().add(SearchEvent(searchString));
               },
               decoration: InputDecoration(
-                  hintText: "Search for a Movie",
+                  hintText: Resources.searchHint,
                   icon: Icon(Icons.search),
                   suffixIcon: IconButton(
                     icon: Icon(Icons.close),

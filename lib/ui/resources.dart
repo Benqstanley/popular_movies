@@ -2,6 +2,10 @@ class Resources{
   static String get searchHint => "Search for a Movie";
   static String get rating => "Rating: ";
   static String get votesHeader => "Votes:";
+  static String get title => "Popular Movies";
+  static String get showWhatWeHave => "Show What We Already Have";
+
+  static String get detailsPath => "/movie";
 
 
   static String get failedToLoadPopularMovies => "Failed To Load Popular Movies";
