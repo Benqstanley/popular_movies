@@ -32,8 +32,10 @@ void main() {
     GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.success());
     bloc.add(SearchEvent("Jack Reacher"));
     var state = await bloc.first;
-    expect(state is LoadedState, true);
-    expect((state as LoadedState).movies.length, 2);
+    expect(state is LoadingState, true);
+    await Future.delayed(Duration(milliseconds: 100));
+    expect(bloc.state is LoadedState, true);
+    expect((bloc.state as LoadedState).movies.length, 2);
     verify(GetIt.I<TMDBAPI>().search(any));
   });
 
@@ -49,7 +51,9 @@ void main() {
     GetIt.I.registerSingleton<TMDBAPI>(MockTMBDAPI.failure());
     bloc.add(SearchEvent("Jack Reacher"));
     var state = await bloc.first;
-    expect(state is ErrorState, true);
+    expect(state is LoadingState, true);
+    await Future.delayed(Duration(milliseconds: 100));
+    expect(bloc.state is ErrorState, true);
     verify(GetIt.I<TMDBAPI>().search(any));
   });
 
