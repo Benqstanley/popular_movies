@@ -16,3 +16,4 @@ A Flutter Application to view the most popular movies (TMDB*)
 
 
 For your viewing pleasure I have included a [demonstration video](demo480.mov).
+If you have trouble viewing it here, you can try this [youtube link](https://youtu.be/kf_H6tMYhmw).
