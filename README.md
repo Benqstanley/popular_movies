@@ -15,4 +15,4 @@ A Flutter Application to view the most popular movies (TMDB*)
 -Enjoy!
 
 
-For your viewing pleasure I have included a [demonstration video](demonstration.mov).
+For your viewing pleasure I have included a [demonstration video](demo480.mov).
