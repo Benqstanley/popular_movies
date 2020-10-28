@@ -27,6 +27,37 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
 
   PopularMoviesBloc(MovieState initialState) : super(initialState);
 
+  /* I developed this using flutter_bloc to get some experience with it,
+     but I had never used it before, so I didn't think this method through very well,
+     After giving it some thought the past few days, I think the changes
+     I would make are as follows:
+
+     Stream<MovieState> mapEventToState(MovieEvent event) async* {
+          if(tmdbapi == null) tmdbapi = GetIt.I<TMDBAPI>();
+          MovieState movieState;
+          switch(event.runtimeType){
+            case ShowWhatWeHaveEvent:
+              yield await createdLoadedState();
+              break;
+            case SearchEvent:
+              yield LoadingState();
+              yield await createLoadedStateFromSearch();
+              break;
+            case FetchEvent:
+              if(hasError) yield LoadingState;
+              yield await createLoadedState();
+              break;
+          }
+      }
+
+      Where createLoadedState(MovieEvent event) and
+      createLoadedStateFromSearch(MovieEvent event), create Loaded or Error
+      States depending on the outcome of the Fetch or Search event respectively.
+      This would greatly simplify this chunk of code, making it easier to read
+      and debug in the future, and making it fit SRP.
+  *
+  * */
+
   @override
   Stream<MovieState> mapEventToState(MovieEvent event) async* {
     if (tmdbapi == null) tmdbapi = GetIt.I<TMDBAPI>();
