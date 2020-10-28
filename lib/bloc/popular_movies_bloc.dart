@@ -27,18 +27,61 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
 
   PopularMoviesBloc(MovieState initialState) : super(initialState);
 
+  /* I developed this using flutter_bloc to get some experience with it,
+     but I had never used it before, so I didn't think this method through very well,
+     After giving it some thought the past few days, I think the changes
+     I would make are as follows:
+
+     Stream<MovieState> mapEventToState(MovieEvent event) async* {
+          if(tmdbapi == null) tmdbapi = GetIt.I<TMDBAPI>();
+          switch(event.runtimeType){
+            case ShowWhatWeHaveEvent:
+              yield await createdLoadedState(event);
+              break;
+            case SearchEvent:
+              yield LoadingState();
+              yield await createLoadedStateFromSearch(event);
+              break;
+            case FetchEvent:
+              if(hasError) yield LoadingState();
+              yield await createLoadedState(event);
+              break;
+          }
+      }
+
+      Where createLoadedState(MovieEvent event) and
+      createLoadedStateFromSearch(MovieEvent event), create Loaded or Error
+      States depending on the outcome of the Fetch or Search event respectively.
+      This would greatly simplify this chunk of code, making it easier to read
+      and debug in the future, and making it fit SRP.
+  *
+  * */
+
   @override
   Stream<MovieState> mapEventToState(MovieEvent event) async* {
     if (tmdbapi == null) tmdbapi = GetIt.I<TMDBAPI>();
+    switch (event.runtimeType) {
+      case ShowWhatWeHaveEvent:
+        yield await createLoadedState(event);
+        break;
+      case SearchEvent:
+        yield LoadingState();
+        yield await createLoadedStateFromSearch(event);
+        break;
+      case FetchEvent:
+        if (hasError) yield LoadingState();
+        yield await createLoadedState(event);
+        break;
+    }
+  }
+
+  Future<MovieState> createLoadedState(MovieEvent event) async {
     if (event is ShowWhatWeHaveEvent) {
-      yield LoadedState(
+      return LoadedState(
         movies: popularMovies,
         currentPage: currentPage,
       );
-      return;
-    }
-    if (hasError || event is SearchEvent) yield LoadingState();
-    if (event is FetchEvent) {
+    } else if (event is FetchEvent) {
       if (event?.pageNumber != null &&
           event.pageNumber > currentPage &&
           !fetchInProgress) {
@@ -51,43 +94,48 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
           popularMovies.addAll(nextPage);
           currentPage = event.pageNumber;
           hasError = false;
-          yield LoadedState(
+          return LoadedState(
             movies: popularMovies,
             currentPage: currentPage,
             maxReached: popularMovies.length >= response.total,
           );
-          return;
         } else {
           hasError = true;
-          yield ErrorState(
+          return ErrorState(
             Resources.failedToLoadPopularMovies,
             event,
             hasResults: popularMovies.isNotEmpty,
           );
-          return;
         }
       }
-    } else if (event is SearchEvent) {
+      return LoadedState(
+        currentPage: currentPage,
+        movies: popularMovies,
+      );
+    }
+    return LoadingState();
+  }
+
+  Future<MovieState> createLoadedStateFromSearch(MovieEvent event) async {
+    if (event is SearchEvent) {
       searchResults = await tmdbapi.search(
         event.searchQuery,
       );
       if (searchResults != null && searchResults.isNotEmpty) {
         hasError = false;
-        yield LoadedState(
+        return LoadedState(
           movies: searchResults,
           maxReached: true,
         );
-        return;
       } else {
         hasError = true;
-        yield ErrorState(
+        return ErrorState(
           Resources.failedToFindSearchResults,
           event,
           hasResults: popularMovies.isNotEmpty,
         );
-        return;
       }
     }
-    return;
+    return LoadingState();
   }
 }

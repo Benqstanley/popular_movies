@@ -139,6 +139,7 @@ class _MovieListPageState extends State<MovieListPage> {
         ),
       ),
       onTap: () {
+        selectedMovie = overview;
         Resources.isSmall
             ? PopularMoviesApp.router.navigateTo(context, Resources.detailsPath,
                 routeSettings: RouteSettings(arguments: overview))
