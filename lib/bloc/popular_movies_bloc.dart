@@ -108,6 +108,10 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
           );
         }
       }
+      return LoadedState(
+        currentPage: currentPage,
+        movies: popularMovies,
+      );
     }
     return LoadingState();
   }
