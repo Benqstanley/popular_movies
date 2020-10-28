@@ -34,18 +34,17 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
 
      Stream<MovieState> mapEventToState(MovieEvent event) async* {
           if(tmdbapi == null) tmdbapi = GetIt.I<TMDBAPI>();
-          MovieState movieState;
           switch(event.runtimeType){
             case ShowWhatWeHaveEvent:
-              yield await createdLoadedState();
+              yield await createdLoadedState(event);
               break;
             case SearchEvent:
               yield LoadingState();
-              yield await createLoadedStateFromSearch();
+              yield await createLoadedStateFromSearch(event);
               break;
             case FetchEvent:
-              if(hasError) yield LoadingState;
-              yield await createLoadedState();
+              if(hasError) yield LoadingState();
+              yield await createLoadedState(event);
               break;
           }
       }
@@ -61,15 +60,28 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
   @override
   Stream<MovieState> mapEventToState(MovieEvent event) async* {
     if (tmdbapi == null) tmdbapi = GetIt.I<TMDBAPI>();
+    switch (event.runtimeType) {
+      case ShowWhatWeHaveEvent:
+        yield await createLoadedState(event);
+        break;
+      case SearchEvent:
+        yield LoadingState();
+        yield await createLoadedStateFromSearch(event);
+        break;
+      case FetchEvent:
+        if (hasError) yield LoadingState();
+        yield await createLoadedState(event);
+        break;
+    }
+  }
+
+  Future<MovieState> createLoadedState(MovieEvent event) async {
     if (event is ShowWhatWeHaveEvent) {
-      yield LoadedState(
+      return LoadedState(
         movies: popularMovies,
         currentPage: currentPage,
       );
-      return;
-    }
-    if (hasError || event is SearchEvent) yield LoadingState();
-    if (event is FetchEvent) {
+    } else if (event is FetchEvent) {
       if (event?.pageNumber != null &&
           event.pageNumber > currentPage &&
           !fetchInProgress) {
@@ -82,43 +94,44 @@ class PopularMoviesBloc extends Bloc<MovieEvent, MovieState> {
           popularMovies.addAll(nextPage);
           currentPage = event.pageNumber;
           hasError = false;
-          yield LoadedState(
+          return LoadedState(
             movies: popularMovies,
             currentPage: currentPage,
             maxReached: popularMovies.length >= response.total,
           );
-          return;
         } else {
           hasError = true;
-          yield ErrorState(
+          return ErrorState(
             Resources.failedToLoadPopularMovies,
             event,
             hasResults: popularMovies.isNotEmpty,
           );
-          return;
         }
       }
-    } else if (event is SearchEvent) {
+    }
+    return LoadingState();
+  }
+
+  Future<MovieState> createLoadedStateFromSearch(MovieEvent event) async {
+    if (event is SearchEvent) {
       searchResults = await tmdbapi.search(
         event.searchQuery,
       );
       if (searchResults != null && searchResults.isNotEmpty) {
         hasError = false;
-        yield LoadedState(
+        return LoadedState(
           movies: searchResults,
           maxReached: true,
         );
-        return;
       } else {
         hasError = true;
-        yield ErrorState(
+        return ErrorState(
           Resources.failedToFindSearchResults,
           event,
           hasResults: popularMovies.isNotEmpty,
         );
-        return;
       }
     }
-    return;
+    return LoadingState();
   }
 }
